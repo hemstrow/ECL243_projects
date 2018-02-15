@@ -1,0 +1,10 @@
+#!/bin/bash -l
+#SBATCH -t 3-12:00:00
+#SBATCH --mem 20G
+#SBATCH -n 8
+
+list=transcript_list.txt
+gff=/home/smmoenga/RNASeq/ECL_Zombie/data/GCA_001272575.2_ASM127257v2_genomic.gff
+genome=genome/GCA_001272575.2_ASM127257v2_genomic.fa
+
+cuffmerge -g $gff -s $genome -p 8 $list
