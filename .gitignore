@@ -1,2 +1,5 @@
 de_Bekker_2015/fungi_alignment/old/
 de_Bekker_2015/fungi_alignment/*_top/
+de_Bekker_2015/fungi_alignment/
+de_Bekker_2015/fungi_alignment/trimmomatic/clean*
+de_Bekker_2015/fungi_alignment/trimmomatic/slurm*
