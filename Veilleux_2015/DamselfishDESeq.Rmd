@@ -1,0 +1,214 @@
+---
+title: "Damselfish_DESeq""
+author: "Amanda"
+date: "2/16/2018"
+output: html_document
+---
+Download DESeq from Bioconductor: 
+```{r}
+## try http:// if https:// URLs are not supported
+source("https://bioconductor.org/biocLite.R")
+biocLite("DESeq2")
+```
+
+
+Load DESeq2:
+```{r}
+library("DESeq2")
+```
+
+Load count data file into R (sample ID row included):
+```{r}
+counts <- as.matrix(read.table("~/Documents/Davis/Classes/ECL243/Damselfish_data/readCount.txt", sep=",", row.names="gene_id"))
+```
+
+Load sample information table into R: 
+```{r}
+sampleinfo <- read.csv("~/Documents/Davis/Classes/ECL243/Damselfish_data/sample_metadata.csv")
+
+#make a new column that has a grouping variable:
+library(stringr)
+library(dplyr)
+sampleinfo2 <- sampleinfo%>%
+  mutate(group=str_c(Treatment, F1.Temperature, F2.Temperature, sep="."))
+
+```
+
+
+Erin says this is not right.... 
+Match the two files so R knows which sample corresponds to which treatments:
+```{r,eval=F}
+matchedcounts <- match(sampleinfo$symbol, colnames(counts))
+
+                       head(counts[1,])
+```
+
+Use sample names as rownames:
+```{r}
+rownames(sampleinfo2) <- sampleinfo2$symbol 
+
+#Create a DESeq2 object
+dds <- DESeqDataSetFromMatrix(countData = counts,
+                              colData = sampleinfo2,
+                              design = ~ group)
+#using design by "group", which includes treatment, f1 temp, and f2 temp. Check that this is correct. 
+
+dds
+```
+
+Remove genes with less than 1 count across all data:
+```{r}
+dds1 <- dds[rowSums(counts(dds)) > 1, ]
+
+##Ask Will & Susan if we should filter to 1 or 10 reads??
+
+keep <- rowSums(counts(dds)) >= 10
+dds2 <- dds[keep,]
+
+```
+
+Specifying the factor level:
+```{r}
+dds2$group <- relevel(dds2$Treatment, ref="Control")
+```
+
+Drop levels without samples:
+```{r}
+dds2$group <- droplevels(dds2$group)
+```
+
+
+Starting the visualizations: 
+```{r}
+rld <- rlog(dds, blind=FALSE)
+
+sampleDists <- dist(t(assay(rld)))
+
+library("pheatmap")
+library("RColorBrewer")
+
+sampleDistMatrix <- as.matrix(sampleDists)
+rownames(sampleDistMatrix) <- rld$group
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(225)
+pheatmap(sampleDistMatrix, 
+         clustering_distance_rows = sampleDists, 
+         clustering_distance_cols = sampleDists, 
+         col=colors)
+
+library("ggplot2")
+plotPCA(rld, intgroup = c("Treatment", "F1.Temperature", "F2.Temperature"))
+
+pcaData <- plotPCA(rld, intgroup = c("Treatment", "F1.Temperature", "F2.Temperature"), returnData=TRUE)
+pcaData
+
+percentVar <- round(100 * attr(pcaData, "percentVar"))
+
+ggplot(pcaData, aes(x=PC1, y=PC2, color=group, shape=Treatment)) +
+  theme_bw() +
+  geom_point(size=3) + 
+  xlab(paste0("PC1: ", percentVar[1], "% variance")) +
+  ylab(paste0("PC2: ", percentVar[2], "% variance")) +
+  coord_fixed()
+```
+
+
+I think this is running the DESeq analysis...
+```{r}
+dds2 <- DESeq(dds2)
+res <- results(dds2, contrast=c("group"))
+resultsNames(dds2)
+res <- lfcShrink(dds2, coef=2)
+
+resLFC <- lfcShrink(dds2, coef=2)
+
+library("BiocParallel")
+register(MulticoreParam(4))
+
+resOrdered <- res[order(res$pvalue),]
+
+summary(res)
+
+#How many adjusted p-values were less than 0.1?
+sum(res$padj <0.1 na.rm=TRUE)
+
+res05 <- results(dds2, alpha=0.05)
+summary(res05)
+```
+
+Independent Hypothesis Weighting to filter p-values: 
+```{r}
+#Install and load IHW:
+source("https://bioconductor.org/biocLite.R")
+biocLite("IHW")
+library("IHW")
+
+
+resIHW <- results(dds2, filterFun=ihw)
+summary(resIHW)
+sum(resIHW$padj < 0.1, na.rm=TRUE)
+metadata(resIHW)$ihwResult
+
+```
+
+Exploring and exporting results: MA plot. This shows the log2 fold changes attribuatable to a given variable over th emean of normalized counts for all the samples in the DESeqDataSet
+```{r}
+plotMA(res, ylim=c(-2,2))
+
+plotMA(resLFC, ylim=c(-2,2)) #this didn't seem to work :( por que?
+
+idx <- identify(res$baseMean, res$log2FoldChange)
+rownames(res)[idx]
+```
+
+Alternative shrinkage estimators: Do we want to use any of these...????
+```{r}
+resApe <- lfcShrink(dds2, coef=2, type="apeglm")
+resAsh <- lfcShrink(dds2, coef=2, type="ashr")
+par(mfrow=c(1,3), mar=c(4,4,2,1))
+xlim <- c(1,1e5); ylim <- c(-3,3)
+plotMA(resLFC, xlim=xlim, ylim=ylim, main="normal")
+plotMA(resApe, xlim=xlim, ylim=ylim, main="apeglm")
+plotMA(resAsh, xlim=xlim, ylim=ylim, main="ashr")
+```
+
+Plot counts:
+```{r}
+plotCounts(dds2, gene=which.min(res$padj), intgroup="group")
+
+d <- plotCounts(dds2, gene=which.min(res$padj), intgroup="group", 
+                returnData=TRUE)
+library("ggplot2")
+ggplot(d, aes(x=group, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_log10(breaks=c(25,100,400))
+```
+
+
+Data transformations and visualization:
+```{r}
+vsd <- vst(dds2, blind=FALSE)
+rld <- rlog(dds2, blind=FALSE)
+head(assay(vsd),3)
+
+ntd <- normTransform(dds2)
+library("vsn")
+meanSdPlot(assay(ntd))
+
+meanSdPlot(assay(vsd))
+
+meanSdPlot(assay(rld))
+```
+
+Heatmap:
+```{r}
+library("pheatmap")
+select <- order(rowMeans(counts(dds2, normalized=TRUE)), 
+                decreasing=TRUE)[1:20]
+df <- as.data.frame(colData(dds2)["group"])
+pheatmap(assay(ntd)[select,], cluster_rows=FALSE, show_rownames=FALSE, 
+         cluster_cols=FALSE, annotation_col=df)
+```
+
+
+
