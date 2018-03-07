@@ -1,0 +1,20 @@
+/usr/bin/cuffmerge -g /home/smmoenga/RNASeq/ECL_Zombie/data/GCA_001272575.2_ASM127257v2_genomic.gff -s /home/hemstrow/ECL243/project/de_Bekker_2015/genome/GCA_001272575.2_ASM127257v2_genomic.fa -p 8 transcript_list.txt
+gtf_to_sam -F ./cufflinks/SRR1986843_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_filetR8NSu
+gtf_to_sam -F ./cufflinks/SRR1986844_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileR7K46l
+gtf_to_sam -F ./cufflinks/SRR1986845_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileuphkie
+gtf_to_sam -F ./cufflinks/SRR1986846_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileiM2Ht7
+gtf_to_sam -F ./cufflinks/SRR1986847_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileAfzdE1
+gtf_to_sam -F ./cufflinks/SRR1986848_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileTwneOW
+gtf_to_sam -F ./cufflinks/SRR1986849_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileb9RZYS
+gtf_to_sam -F ./cufflinks/SRR1986850_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileXHrXaP
+gtf_to_sam -F ./cufflinks/SRR1986851_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileFpnYnL
+gtf_to_sam -F ./cufflinks/SRR1986852_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_filel9c1BH
+gtf_to_sam -F ./cufflinks/SRR1986853_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileBH85QD
+gtf_to_sam -F ./cufflinks/SRR1986854_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileTuhc7z
+gtf_to_sam -F ./cufflinks/SRR1986855_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_file2u6iow
+gtf_to_sam -F ./cufflinks/SRR1986856_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_filevnCIHt
+gtf_to_sam -F ./cufflinks/SRR1986857_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_filehayP3r
+sort -k 3,3 -k 4,4n --temporary-directory=./merged_asm//tmp/ ./merged_asm/tmp/gtf2sam_filetR8NSu ./merged_asm/tmp/gtf2sam_fileR7K46l ./merged_asm/tmp/gtf2sam_fileuphkie ./merged_asm/tmp/gtf2sam_fileiM2Ht7 ./merged_asm/tmp/gtf2sam_fileAfzdE1 ./merged_asm/tmp/gtf2sam_fileTwneOW ./merged_asm/tmp/gtf2sam_fileb9RZYS ./merged_asm/tmp/gtf2sam_fileXHrXaP ./merged_asm/tmp/gtf2sam_fileFpnYnL ./merged_asm/tmp/gtf2sam_filel9c1BH ./merged_asm/tmp/gtf2sam_fileBH85QD ./merged_asm/tmp/gtf2sam_fileTuhc7z ./merged_asm/tmp/gtf2sam_file2u6iow ./merged_asm/tmp/gtf2sam_filevnCIHt ./merged_asm/tmp/gtf2sam_filehayP3r > ./merged_asm/tmp/mergeSam_fileRP9lsr
+cufflinks -o ./merged_asm/ -F 0.05 -g /home/smmoenga/RNASeq/ECL_Zombie/data/GCA_001272575.2_ASM127257v2_genomic.gff -q --overhang-tolerance 200 --library-type=transfrags -A 0.0 --min-frags-per-transfrag 0 --no-5-extend -p 8 ./merged_asm/tmp/mergeSam_fileRP9lsr
+cuffcompare -o tmp_meta_asm -C -G  -r /home/smmoenga/RNASeq/ECL_Zombie/data/GCA_001272575.2_ASM127257v2_genomic.gff  -s /home/hemstrow/ECL243/project/de_Bekker_2015/genome/GCA_001272575.2_ASM127257v2_genomic.fa ./merged_asm//transcripts.gtf
+cuffcompare -o tmp_meta_asm -C -G  -r /home/smmoenga/RNASeq/ECL_Zombie/data/GCA_001272575.2_ASM127257v2_genomic.gff  -s /home/hemstrow/ECL243/project/de_Bekker_2015/genome/GCA_001272575.2_ASM127257v2_genomic.fa ./merged_asm//merged.gtf

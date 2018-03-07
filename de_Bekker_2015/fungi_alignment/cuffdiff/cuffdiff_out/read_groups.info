@@ -1,0 +1,10 @@
+file	condition	replicate_num	total_mass	norm_mass	internal_scale	external_scale
+/home/hemstrow/ECL243/project/de_Bekker_2015/fungi_alignment/cufflinks/SRR1986843_1.fastq_top/accepted_hits.bam	Live_manipulation	0	7.49505e+06	1.02639e+07	0.73021	1
+/home/hemstrow/ECL243/project/de_Bekker_2015/fungi_alignment/cufflinks/SRR1986844_1.fastq_top/accepted_hits.bam	Live_manipulation	1	6.63102e+06	1.02639e+07	0.646029	1
+/home/hemstrow/ECL243/project/de_Bekker_2015/fungi_alignment/cufflinks/SRR1986845_1.fastq_top/accepted_hits.bam	Live_manipulation	2	9.33919e+06	1.02639e+07	0.90988	1
+/home/hemstrow/ECL243/project/de_Bekker_2015/fungi_alignment/cufflinks/SRR1986846_1.fastq_top/accepted_hits.bam	Dead_after_Mani	0	1.08883e+07	1.02639e+07	1.0608	1
+/home/hemstrow/ECL243/project/de_Bekker_2015/fungi_alignment/cufflinks/SRR1986847_1.fastq_top/accepted_hits.bam	Dead_after_Mani	1	9.21101e+06	1.02639e+07	0.89739	1
+/home/hemstrow/ECL243/project/de_Bekker_2015/fungi_alignment/cufflinks/SRR1986848_1.fastq_top/accepted_hits.bam	Dead_after_Mani	2	9.69992e+06	1.02639e+07	0.945023	1
+/home/hemstrow/ECL243/project/de_Bekker_2015/fungi_alignment/cufflinks/SRR1986855_1.fastq_top/accepted_hits.bam	Fungal_Control	0	1.04235e+07	1.02639e+07	1.01551	1
+/home/hemstrow/ECL243/project/de_Bekker_2015/fungi_alignment/cufflinks/SRR1986856_1.fastq_top/accepted_hits.bam	Fungal_Control	1	1.50354e+07	1.02639e+07	1.46484	1
+/home/hemstrow/ECL243/project/de_Bekker_2015/fungi_alignment/cufflinks/SRR1986857_1.fastq_top/accepted_hits.bam	Fungal_Control	2	1.36546e+07	1.02639e+07	1.33031	1

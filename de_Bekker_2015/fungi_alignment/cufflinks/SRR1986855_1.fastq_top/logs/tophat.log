@@ -1,0 +1,44 @@
+
+[2018-02-16 11:21:00] Beginning TopHat run (v2.1.1)
+-----------------------------------------------
+[2018-02-16 11:21:00] Checking for Bowtie
+		  Bowtie version:	 2.3.0.0
+[2018-02-16 11:21:00] Checking for Bowtie index files (genome)..
+[2018-02-16 11:21:00] Checking for reference FASTA file
+[2018-02-16 11:21:00] Generating SAM header for /home/hemstrow/ECL243/project/de_Bekker_2015/genome/GCA_001272575.2_ASM127257v2_genomic
+[2018-02-16 11:21:00] Reading known junctions from GTF file
+[2018-02-16 11:21:01] Preparing reads
+	 left reads: min. length=36, max. length=100, 13657417 kept reads (23 discarded)
+	right reads: min. length=36, max. length=100, 13657313 kept reads (127 discarded)
+[2018-02-16 11:37:18] Building transcriptome data files SRR1986855_1.fastq_top/tmp/GCA_001272575.2_ASM127257v2_genomic
+[2018-02-16 11:37:19] Building Bowtie index from GCA_001272575.2_ASM127257v2_genomic.fa
+[2018-02-16 11:37:28] Mapping left_kept_reads to transcriptome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 
+[2018-02-16 11:44:35] Mapping right_kept_reads to transcriptome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 
+[2018-02-16 11:50:55] Resuming TopHat pipeline with unmapped reads
+[2018-02-16 11:50:55] Mapping left_kept_reads.m2g_um to genome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 
+[2018-02-16 11:58:22] Mapping left_kept_reads.m2g_um_seg1 to genome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 (1/4)
+[2018-02-16 11:59:01] Mapping left_kept_reads.m2g_um_seg2 to genome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 (2/4)
+[2018-02-16 11:59:44] Mapping left_kept_reads.m2g_um_seg3 to genome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 (3/4)
+[2018-02-16 12:00:26] Mapping left_kept_reads.m2g_um_seg4 to genome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 (4/4)
+[2018-02-16 12:01:01] Mapping right_kept_reads.m2g_um to genome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 
+[2018-02-16 12:08:40] Mapping right_kept_reads.m2g_um_seg1 to genome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 (1/4)
+[2018-02-16 12:09:24] Mapping right_kept_reads.m2g_um_seg2 to genome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 (2/4)
+[2018-02-16 12:10:07] Mapping right_kept_reads.m2g_um_seg3 to genome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 (3/4)
+[2018-02-16 12:10:50] Mapping right_kept_reads.m2g_um_seg4 to genome GCA_001272575.2_ASM127257v2_genomic with Bowtie2 (4/4)
+[2018-02-16 12:11:24] Searching for junctions via segment mapping
+[2018-02-16 12:12:59] Retrieving sequences for splices
+[2018-02-16 12:13:00] Indexing splices
+[2018-02-16 12:13:02] Mapping left_kept_reads.m2g_um_seg1 to genome segment_juncs with Bowtie2 (1/4)
+[2018-02-16 12:13:17] Mapping left_kept_reads.m2g_um_seg2 to genome segment_juncs with Bowtie2 (2/4)
+[2018-02-16 12:13:31] Mapping left_kept_reads.m2g_um_seg3 to genome segment_juncs with Bowtie2 (3/4)
+[2018-02-16 12:13:45] Mapping left_kept_reads.m2g_um_seg4 to genome segment_juncs with Bowtie2 (4/4)
+[2018-02-16 12:13:57] Joining segment hits
+[2018-02-16 12:14:21] Mapping right_kept_reads.m2g_um_seg1 to genome segment_juncs with Bowtie2 (1/4)
+[2018-02-16 12:14:42] Mapping right_kept_reads.m2g_um_seg2 to genome segment_juncs with Bowtie2 (2/4)
+[2018-02-16 12:14:57] Mapping right_kept_reads.m2g_um_seg3 to genome segment_juncs with Bowtie2 (3/4)
+[2018-02-16 12:15:12] Mapping right_kept_reads.m2g_um_seg4 to genome segment_juncs with Bowtie2 (4/4)
+[2018-02-16 12:15:24] Joining segment hits
+[2018-02-16 12:15:50] Reporting output tracks
+-----------------------------------------------
+[2018-02-16 12:34:25] A summary of the alignment counts can be found in SRR1986855_1.fastq_top/align_summary.txt
+[2018-02-16 12:34:25] Run complete: 01:13:25 elapsed

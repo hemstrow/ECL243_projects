@@ -1,0 +1,20 @@
+/usr/bin/cuffmerge -g /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.gff -s /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.fa -p 8 transcript_list.txt
+gtf_to_sam -F cufflinks/SRR1986843_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileRHzVPe
+gtf_to_sam -F cufflinks/SRR1986844_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_filehRHxvC
+gtf_to_sam -F cufflinks/SRR1986845_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_filelqqgQ2
+gtf_to_sam -F cufflinks/SRR1986846_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileubBuov
+gtf_to_sam -F cufflinks/SRR1986847_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_file3DKv1Z
+gtf_to_sam -F cufflinks/SRR1986848_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_filec1QeFw
+gtf_to_sam -F cufflinks/SRR1986849_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileZk3iH5
+gtf_to_sam -F cufflinks/SRR1986850_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileS46TyH
+gtf_to_sam -F cufflinks/SRR1986851_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_filexeQymm
+gtf_to_sam -F cufflinks/SRR1986852_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileDWkNl4
+gtf_to_sam -F cufflinks/SRR1986853_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileH8F2hP
+gtf_to_sam -F cufflinks/SRR1986854_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_file0LfKcD
+gtf_to_sam -F cufflinks/SRR1986855_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileuTbG5t
+gtf_to_sam -F cufflinks/SRR1986856_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileTN57Zk
+gtf_to_sam -F cufflinks/SRR1986857_1.fastq_cuff/transcripts.gtf ./merged_asm/tmp/gtf2sam_fileAxI4Vb
+sort -k 3,3 -k 4,4n --temporary-directory=./merged_asm//tmp/ ./merged_asm/tmp/gtf2sam_fileRHzVPe ./merged_asm/tmp/gtf2sam_filehRHxvC ./merged_asm/tmp/gtf2sam_filelqqgQ2 ./merged_asm/tmp/gtf2sam_fileubBuov ./merged_asm/tmp/gtf2sam_file3DKv1Z ./merged_asm/tmp/gtf2sam_filec1QeFw ./merged_asm/tmp/gtf2sam_fileZk3iH5 ./merged_asm/tmp/gtf2sam_fileS46TyH ./merged_asm/tmp/gtf2sam_filexeQymm ./merged_asm/tmp/gtf2sam_fileDWkNl4 ./merged_asm/tmp/gtf2sam_fileH8F2hP ./merged_asm/tmp/gtf2sam_file0LfKcD ./merged_asm/tmp/gtf2sam_fileuTbG5t ./merged_asm/tmp/gtf2sam_fileTN57Zk ./merged_asm/tmp/gtf2sam_fileAxI4Vb > ./merged_asm/tmp/mergeSam_filefBAqT2
+cufflinks -o ./merged_asm/ -F 0.05 -g /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.gff -q --overhang-tolerance 200 --library-type=transfrags -A 0.0 --min-frags-per-transfrag 0 --no-5-extend -p 8 ./merged_asm/tmp/mergeSam_filefBAqT2
+cuffcompare -o tmp_meta_asm -C -G  -r /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.gff  -s /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.fa ./merged_asm//transcripts.gtf
+cuffcompare -o tmp_meta_asm -C -G  -r /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.gff  -s /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.fa ./merged_asm//merged.gtf

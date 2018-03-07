@@ -1,0 +1,71 @@
+==========================================
+SLURM_JOB_ID = 18447840
+SLURM_NODELIST = c8-63
+==========================================
+Module slurm/16.05.8 loaded 
+Module openmpi/2.0.1 loaded 
+
+[Wed Feb 28 15:16:36 2018] Beginning transcriptome assembly merge
+-------------------------------------------
+
+[Wed Feb 28 15:16:36 2018] Preparing output location ./merged_asm/
+[Wed Feb 28 15:16:38 2018] Converting GTF files to SAM
+[15:16:38] Loading reference annotation.
+[15:16:38] Loading reference annotation.
+[15:16:39] Loading reference annotation.
+[15:16:39] Loading reference annotation.
+[15:16:40] Loading reference annotation.
+[15:16:40] Loading reference annotation.
+[15:16:41] Loading reference annotation.
+[15:16:41] Loading reference annotation.
+[15:16:41] Loading reference annotation.
+[15:16:41] Loading reference annotation.
+[15:16:41] Loading reference annotation.
+[15:16:41] Loading reference annotation.
+[15:16:41] Loading reference annotation.
+[15:16:41] Loading reference annotation.
+[15:16:42] Loading reference annotation.
+[Wed Feb 28 15:16:43 2018] Quantitating transcripts
+Warning: Could not connect to update server to verify current version. Please check at the Cufflinks website (http://cufflinks.cbcb.umd.edu).
+Command line:
+cufflinks -o ./merged_asm/ -F 0.05 -g /home/smmoenga/RNASeq/ECL_Zombie/data/GCA_001272575.2_ASM127257v2_genomic.gff -q --overhang-tolerance 200 --library-type=transfrags -A 0.0 --min-frags-per-transfrag 0 --no-5-extend -p 8 ./merged_asm/tmp/mergeSam_fileRP9lsr 
+[bam_header_read] EOF marker is absent. The input is probably truncated.
+[bam_header_read] invalid BAM binary header (this is not a BAM file).
+File ./merged_asm/tmp/mergeSam_fileRP9lsr doesn't appear to be a valid BAM file, trying SAM...
+[15:16:43] Loading reference annotation.
+[15:16:44] Inspecting reads and determining fragment length distribution.
+Processed 4910 loci.                        
+> Map Properties:
+>	Normalized Map Mass: 89263.00
+>	Raw Map Mass: 89263.00
+>	Fragment Length Distribution: Truncated Gaussian (default)
+>	              Default Mean: 200
+>	           Default Std Dev: 80
+[15:16:45] Assembling transcripts and estimating abundances.
+Processed 4910 loci.                        
+[Wed Feb 28 15:16:52 2018] Comparing against reference file /home/smmoenga/RNASeq/ECL_Zombie/data/GCA_001272575.2_ASM127257v2_genomic.gff
+Warning: Could not connect to update server to verify current version. Please check at the Cufflinks website (http://cufflinks.cbcb.umd.edu).
+[Wed Feb 28 15:16:57 2018] Comparing against reference file /home/smmoenga/RNASeq/ECL_Zombie/data/GCA_001272575.2_ASM127257v2_genomic.gff
+Warning: Could not connect to update server to verify current version. Please check at the Cufflinks website (http://cufflinks.cbcb.umd.edu).
+
+===========================================================================
+Job Finished
+
+Name                : run_fungi_cuffmerge.txt
+User                : hemstrow
+Partition           : med
+Nodes               : c8-63
+Cores               : 8
+State               : COMPLETED
+Submit              : 2018-02-28T15:14:34
+Start               : 2018-02-28T15:16:36
+End                 : 2018-02-28T15:17:02
+Reserved walltime   : 3-12:00:00
+Used walltime       :   00:00:26
+Used CPU time       :   00:00:52
+% User (Computation): 94.39%
+% System (I/O)      :  5.60%
+Mem reserved        : 20G/node
+Max Mem used        : 0.00  (c8-63)
+Max Disk Write      : 0.00  (c8-63)
+Max Disk Read       : 0.00  (c8-63)

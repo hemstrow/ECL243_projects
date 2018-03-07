@@ -1,0 +1,15 @@
+./cufflinks/SRR1986843_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986844_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986845_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986846_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986847_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986848_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986849_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986850_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986851_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986852_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986853_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986854_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986855_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986856_1.fastq_cuff/transcripts.gtf
+./cufflinks/SRR1986857_1.fastq_cuff/transcripts.gtf

@@ -1,0 +1,15 @@
+SRR1986843_1.fastq_top/align_summary.txt:10.8% concordant pair alignment rate.
+SRR1986844_1.fastq_top/align_summary.txt:11.7% concordant pair alignment rate.
+SRR1986845_1.fastq_top/align_summary.txt: 8.5% concordant pair alignment rate.
+SRR1986846_1.fastq_top/align_summary.txt: 4.9% concordant pair alignment rate.
+SRR1986847_1.fastq_top/align_summary.txt: 6.7% concordant pair alignment rate.
+SRR1986848_1.fastq_top/align_summary.txt: 7.7% concordant pair alignment rate.
+SRR1986849_1.fastq_top/align_summary.txt:19.6% concordant pair alignment rate.
+SRR1986850_1.fastq_top/align_summary.txt:17.1% concordant pair alignment rate.
+SRR1986851_1.fastq_top/align_summary.txt:17.8% concordant pair alignment rate.
+SRR1986852_1.fastq_top/align_summary.txt:18.1% concordant pair alignment rate.
+SRR1986853_1.fastq_top/align_summary.txt:19.1% concordant pair alignment rate.
+SRR1986854_1.fastq_top/align_summary.txt:19.8% concordant pair alignment rate.
+SRR1986855_1.fastq_top/align_summary.txt: 0.0% concordant pair alignment rate.
+SRR1986856_1.fastq_top/align_summary.txt: 0.0% concordant pair alignment rate.
+SRR1986857_1.fastq_top/align_summary.txt: 0.0% concordant pair alignment rate.

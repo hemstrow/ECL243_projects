@@ -1,4 +1,10 @@
 de_Bekker_2015/fungi_alignment/old/
-de_Bekker_2015/fungi_alignment/cufflinks/*_top/
-de_Bekker_2015/fungi_alignment/trimmomatic/clean*
-de_Bekker_2015/fungi_alignment/trimmomatic/slurm*
+de_Bekker_2015/fungi_alignment/cufflinks/old/*
+de_Bekker_2015/fungi_alignment/cufflinks/*top/accepted_hits.bam
+de_Bekker_2015/fungi_alignment/cufflinks/*top/unmapped.bam
+de_Bekker_2015/genome/GCA_001272575.2_ASM127257v2_genomic.*
+de_Bekker_2015/genome/GCF_000147175.1_CamFlo_1.0_genomic.gff
+de_Bekker_2015/ant_alignment/cufflinks/*top/accepted_hits.bam
+de_Bekker_2015/ant_alignment/cufflinks/*top/unmapped.bam
+de_Bekker_2015/fungi_alignment/trimmomatic/*
+de_Bekker_2015/ant_alignment/merged_asm/merged.gtf

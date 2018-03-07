@@ -1,0 +1,3 @@
+SRR1986843_1.fastq_top/accepted_hits.bam	SRR1986844_1.fastq_top/accepted_hits.bam	SRR1986845_1.fastq_top/accepted_hits.bam
+SRR1986846_1.fastq_top/accepted_hits.bam	SRR1986847_1.fastq_top/accepted_hits.bam	SRR1986848_1.fastq_top/accepted_hits.bam
+SRR1986855_1.fastq_top/accepted_hits.bam	SRR1986856_1.fastq_top/accepted_hits.bam	SRR1986857_1.fastq_top/accepted_hits.bam

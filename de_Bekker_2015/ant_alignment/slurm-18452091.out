@@ -1,0 +1,73 @@
+==========================================
+SLURM_JOB_ID = 18452091
+SLURM_NODELIST = c10-71
+==========================================
+Module slurm/16.05.8 loaded 
+Module openmpi/2.0.1 loaded 
+
+[Fri Mar  2 11:22:37 2018] Beginning transcriptome assembly merge
+-------------------------------------------
+
+[Fri Mar  2 11:22:37 2018] Preparing output location ./merged_asm/
+[Fri Mar  2 11:22:43 2018] Converting GTF files to SAM
+[11:22:43] Loading reference annotation.
+[11:22:44] Loading reference annotation.
+[11:22:46] Loading reference annotation.
+[11:22:47] Loading reference annotation.
+[11:22:48] Loading reference annotation.
+[11:22:49] Loading reference annotation.
+[11:22:50] Loading reference annotation.
+[11:22:51] Loading reference annotation.
+[11:22:52] Loading reference annotation.
+[11:22:54] Loading reference annotation.
+[11:22:55] Loading reference annotation.
+[11:22:57] Loading reference annotation.
+[11:22:58] Loading reference annotation.
+[11:22:58] Loading reference annotation.
+[11:22:58] Loading reference annotation.
+[Fri Mar  2 11:22:59 2018] Quantitating transcripts
+Warning: Could not connect to update server to verify current version. Please check at the Cufflinks website (http://cufflinks.cbcb.umd.edu).
+Command line:
+cufflinks -o ./merged_asm/ -F 0.05 -g /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.gff -q --overhang-tolerance 200 --library-type=transfrags -A 0.0 --min-frags-per-transfrag 0 --no-5-extend -p 8 ./merged_asm/tmp/mergeSam_filefBAqT2 
+[bam_header_read] EOF marker is absent. The input is probably truncated.
+[bam_header_read] invalid BAM binary header (this is not a BAM file).
+File ./merged_asm/tmp/mergeSam_filefBAqT2 doesn't appear to be a valid BAM file, trying SAM...
+[11:22:59] Loading reference annotation.
+[11:23:03] Inspecting reads and determining fragment length distribution.
+Processed 16265 loci.                       
+> Map Properties:
+>	Normalized Map Mass: 333145.00
+>	Raw Map Mass: 333145.00
+>	Fragment Length Distribution: Truncated Gaussian (default)
+>	              Default Mean: 200
+>	           Default Std Dev: 80
+[11:23:06] Assembling transcripts and estimating abundances.
+Processed 16265 loci.                       
+[Fri Mar  2 11:23:46 2018] Comparing against reference file /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.gff
+Warning: Could not connect to update server to verify current version. Please check at the Cufflinks website (http://cufflinks.cbcb.umd.edu).
+No fasta index found for /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.fa. Rebuilding, please wait..
+Fasta index rebuilt.
+[Fri Mar  2 11:24:09 2018] Comparing against reference file /home/hemstrow/ECL243/project/de_Bekker_2015/genome/NW_011876401.1.gff
+Warning: Could not connect to update server to verify current version. Please check at the Cufflinks website (http://cufflinks.cbcb.umd.edu).
+
+===========================================================================
+Job Finished
+
+Name                : run_ant_cuffmerge.txt
+User                : hemstrow
+Partition           : med
+Nodes               : c10-71
+Cores               : 8
+State               : COMPLETED
+Submit              : 2018-03-02T11:22:33
+Start               : 2018-03-02T11:22:37
+End                 : 2018-03-02T11:24:24
+Reserved walltime   : 3-12:00:00
+Used walltime       :   00:01:47
+Used CPU time       :   00:04:43
+% User (Computation): 96.38%
+% System (I/O)      :  3.62%
+Mem reserved        : 20G/node
+Max Mem used        : 92.95M (c10-71)
+Max Disk Write      : 466.00M (c10-71)
+Max Disk Read       : 1.58G (c10-71)
