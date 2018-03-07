@@ -4,6 +4,13 @@ author: "Amanda"
 date: "2/16/2018"
 output: html_document
 ---
+
+Set working directory:
+```{r}
+setwd("~/Documents/Davis/Classes/ECL243/Damselfish_data")
+```
+
+
 Download DESeq from Bioconductor: 
 ```{r}
 ## try http:// if https:// URLs are not supported
@@ -19,12 +26,12 @@ library("DESeq2")
 
 Load count data file into R (sample ID row included):
 ```{r}
-counts <- as.matrix(read.table("~/Documents/Davis/Classes/ECL243/Damselfish_data/readCount.txt", sep=",", row.names="gene_id"))
+counts <- as.matrix(read.csv("~/Documents/Davis/Classes/ECL243/Damselfish_data/readCount.csv", row.names="gene_id"))
 ```
 
 Load sample information table into R: 
 ```{r}
-sampleinfo <- read.csv("~/Documents/Davis/Classes/ECL243/Damselfish_data/sample_metadata.csv")
+sampleinfo <- read.csv("~/Documents/Davis/Classes/ECL243/Damselfish_data/sample_metadata.csv", stringsAsFactors = FALSE)
 
 #make a new column that has a grouping variable:
 library(stringr)
@@ -48,28 +55,38 @@ Use sample names as rownames:
 rownames(sampleinfo2) <- sampleinfo2$symbol 
 
 #Create a DESeq2 object
+
+colnames(counts) <- NULL  #note, this is added b/c there is a known error after the latest update where the column names of the count file are different than the row names of the metadata file (error: "assay colnames() must be NULL or equal colData rownames()") Even though these PERFECTLY MATCH for our files, it's still generating this error. So it can be fixed by clearing out the column names of the count files.
+
 dds <- DESeqDataSetFromMatrix(countData = counts,
                               colData = sampleinfo2,
                               design = ~ group)
-#using design by "group", which includes treatment, f1 temp, and f2 temp. Check that this is correct. 
+#using design by "group", which includes treatment, f1 temp, and f2 temp. Pretty sure this is correct. 
 
 dds
+
+
 ```
 
 Remove genes with less than 1 count across all data:
 ```{r}
 dds1 <- dds[rowSums(counts(dds)) > 1, ]
 
-##Ask Will & Susan if we should filter to 1 or 10 reads??
+##Ask Will & Susan if we should filter to 1 or 10 reads?? Susan says 10 is fine. Also, this is what's in the pipeline. 
 
 keep <- rowSums(counts(dds)) >= 10
 dds2 <- dds[keep,]
 
+
 ```
 
-Specifying the factor level:
+Specifying the factor level (you want to order everything to start with control because that's what it's comparing against):
 ```{r}
-dds2$group <- relevel(dds2$Treatment, ref="Control")
+str(counts)
+str(sampleinfo2)
+
+dds2$group <- factor(dds2$group, levels= c("Control.+0°C.+0°C", "Developmental.+0°C.+1.5°C", "Developmental.+0°C.+3°C", "Transgenerational.+1.5°C.+1.5°C", "Transgenerational.+3°C.+3°C"))
+
 ```
 
 Drop levels without samples:
@@ -78,17 +95,24 @@ dds2$group <- droplevels(dds2$group)
 ```
 
 
-Starting the visualizations: 
-```{r}
+Normalization/variance stabilization: 
+```{r, eval=F}
+#rlog is the normalization
+#DON'T DO RLOG!!!!THIS IS NOT FOR DE!!!!  
 rld <- rlog(dds, blind=FALSE)
+```
 
-sampleDists <- dist(t(assay(rld)))
+
+Starting to visualize...:
+```{r}
+
+sampleDists <- dist(t(assay(dds2)))
 
 library("pheatmap")
 library("RColorBrewer")
 
 sampleDistMatrix <- as.matrix(sampleDists)
-rownames(sampleDistMatrix) <- rld$group
+rownames(sampleDistMatrix) <- dds2$group
 colnames(sampleDistMatrix) <- NULL
 colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(225)
 pheatmap(sampleDistMatrix, 
@@ -97,7 +121,7 @@ pheatmap(sampleDistMatrix,
          col=colors)
 
 library("ggplot2")
-plotPCA(rld, intgroup = c("Treatment", "F1.Temperature", "F2.Temperature"))
+plotPCA(dds2, intgroup = c("Treatment", "F1.Temperature", "F2.Temperature"))
 
 pcaData <- plotPCA(rld, intgroup = c("Treatment", "F1.Temperature", "F2.Temperature"), returnData=TRUE)
 pcaData
@@ -116,11 +140,21 @@ ggplot(pcaData, aes(x=PC1, y=PC2, color=group, shape=Treatment)) +
 I think this is running the DESeq analysis...
 ```{r}
 dds2 <- DESeq(dds2)
-res <- results(dds2, contrast=c("group"))
+res <- results(dds2)
+##res <- results(dds2, contrast=c("group"))   ##add pairwise comparisons
+res1 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Developmental.+0°C.+1.5°C"), alpha=0.05)
+res2 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Developmental.+0°C.+3°C"), alpha=0.05)
+res3 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Transgenerational.+1.5°C.+1.5°C"), alpha=0.05)
+res4 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Transgenerational.+3°C.+3°C"), alpha=0.05)
+res5 <- results(dds2, contrast=c("group", "Developmental.+0°C.+1.5°C", "Transgenerational.+1.5°C.+1.5°C"), alpha=0.05)
+res6 <- results(dds2, contrast=c("group", "Developmental.+0°C.+3°C", "Transgenerational.+3°C.+3°C"), alpha=0.05)
+
+#Note, the "res" functions take a few minutes to run:
 resultsNames(dds2)
 res <- lfcShrink(dds2, coef=2)
 
 resLFC <- lfcShrink(dds2, coef=2)
+
 
 library("BiocParallel")
 register(MulticoreParam(4))
@@ -130,7 +164,7 @@ resOrdered <- res[order(res$pvalue),]
 summary(res)
 
 #How many adjusted p-values were less than 0.1?
-sum(res$padj <0.1 na.rm=TRUE)
+sum(res$padj <0.1 na.rm=TRUE) #This didn't work
 
 res05 <- results(dds2, alpha=0.05)
 summary(res05)
@@ -187,8 +221,10 @@ ggplot(d, aes(x=group, y=count)) +
 
 Data transformations and visualization:
 ```{r}
-vsd <- vst(dds2, blind=FALSE)
-rld <- rlog(dds2, blind=FALSE)
+
+#DO NOT DO VST OR RLOG --- NOT INTENDED FOR DE. 
+vsd <- vst(dds2, blind=FALSE)  ##some sort of variance stabilized transformation
+rld <- rlog(dds2, blind=FALSE)  ##some sort of log normalization 
 head(assay(vsd),3)
 
 ntd <- normTransform(dds2)
@@ -208,7 +244,46 @@ select <- order(rowMeans(counts(dds2, normalized=TRUE)),
 df <- as.data.frame(colData(dds2)["group"])
 pheatmap(assay(ntd)[select,], cluster_rows=FALSE, show_rownames=FALSE, 
          cluster_cols=FALSE, annotation_col=df)
+
+pheatmap(assay(ntd)[select,], cluster_rows=TRUE, show_rownames=FALSE, 
+         cluster_cols=TRUE, annotation_col=df)
 ```
+
+
+BUT wait, we need to annotate the reads so we actually know which genes are being up/down regulated. So, let's import the GFF file (the annotation file) and make a txdb object:
+```{r}
+
+#Install GenomicFeatures
+## try http:// if https:// URLs are not supported
+source("https://bioconductor.org/biocLite.R")
+biocLite("GenomicFeatures")
+
+library("GenomicFeatures")
+gtffile <- file.path("/Users/amanda/Documents/Davis/Classes/ECL243/Damselfish_data")
+txdb <- makeTxDbFromGFF("GCF_002109545.1_ASM210954v1_genomic.gff", format="gff3")
+#Some 'orphan' exons were dropped because they are exons that weren't found in the gff file.
+
+ebg <- exonsBy(txdb, by="gene")
+ebg[[1]]
+
+```
+
+The authors already gave us a count file, so we can step the step of creating a count file from individual read files. Now we just do the actual counting and create a SummarizedExperiment object:
+```{r}
+library("GenomicAlignments")
+
+se <- summarizeOverlaps(features=ebg, reads=counts, 
+                        mode="Union", 
+                        singleEnd=FALSE, 
+                        ignore.strand=TRUE, 
+                        fragments=TRUE )
+
+##Can't do this because we don't have the bam files :(
+```
+
+
+
+
 
 
 
