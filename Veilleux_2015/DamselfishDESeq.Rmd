@@ -5,19 +5,12 @@ date: "2/16/2018"
 output: html_document
 ---
 
-Set working directory:
-```{r}
-setwd("~/Documents/Davis/Classes/ECL243/Damselfish_data")
-```
-
-
 Download DESeq from Bioconductor: 
-```{r}
+```{r, eval=F}
 ## try http:// if https:// URLs are not supported
 source("https://bioconductor.org/biocLite.R")
 biocLite("DESeq2")
 ```
-
 
 Load DESeq2:
 ```{r}
@@ -39,44 +32,34 @@ library(dplyr)
 sampleinfo2 <- sampleinfo%>%
   mutate(group=str_c(Treatment, F1.Temperature, F2.Temperature, sep="."))
 
+#Use sample names as rownames:
+rownames(sampleinfo2) <- sampleinfo2$symbol
+
 ```
 
-
-Erin says this is not right.... 
-Match the two files so R knows which sample corresponds to which treatments:
-```{r,eval=F}
-matchedcounts <- match(sampleinfo$symbol, colnames(counts))
-
-                       head(counts[1,])
-```
-
-Use sample names as rownames:
+Create a DESeq2 object (dds):
 ```{r}
-rownames(sampleinfo2) <- sampleinfo2$symbol 
-
-#Create a DESeq2 object
 
 colnames(counts) <- NULL  #note, this is added b/c there is a known error after the latest update where the column names of the count file are different than the row names of the metadata file (error: "assay colnames() must be NULL or equal colData rownames()") Even though these PERFECTLY MATCH for our files, it's still generating this error. So it can be fixed by clearing out the column names of the count files.
 
 dds <- DESeqDataSetFromMatrix(countData = counts,
                               colData = sampleinfo2,
                               design = ~ group)
-#using design by "group", which includes treatment, f1 temp, and f2 temp. Pretty sure this is correct. 
+#using design by "group", which includes treatment, f1 temp, and f2 temp.
 
 dds
-
 
 ```
 
 Remove genes with less than 1 count across all data:
 ```{r}
 dds1 <- dds[rowSums(counts(dds)) > 1, ]
+dds2 <- dds1
 
-##Ask Will & Susan if we should filter to 1 or 10 reads?? Susan says 10 is fine. Also, this is what's in the pipeline. 
+#We filtered to >1 read to keep as many reads as possible. The pipeline filters to >10 reads. Not sure what the authors did. 
 
-keep <- rowSums(counts(dds)) >= 10
-dds2 <- dds[keep,]
-
+#keep <- rowSums(counts(dds)) >= 10
+#dds2 <- dds[keep,]
 
 ```
 
@@ -96,12 +79,12 @@ dds2$group <- droplevels(dds2$group)
 
 
 Normalization/variance stabilization: 
-```{r, eval=F}
-#rlog is the normalization
-#DON'T DO RLOG!!!!THIS IS NOT FOR DE!!!!  
+```{r}
+#rlog is the normalization. We only want to use this for visualization, NOT for the differential expression analysis. 
+
+#rld takes a while to run. 
 rld <- rlog(dds, blind=FALSE)
 ```
-
 
 Starting to visualize...:
 ```{r}
@@ -134,20 +117,83 @@ ggplot(pcaData, aes(x=PC1, y=PC2, color=group, shape=Treatment)) +
   xlab(paste0("PC1: ", percentVar[1], "% variance")) +
   ylab(paste0("PC2: ", percentVar[2], "% variance")) +
   coord_fixed()
+
 ```
 
 
-I think this is running the DESeq analysis...
+Running the DESeq analysis:
 ```{r}
 dds2 <- DESeq(dds2)
 res <- results(dds2)
 ##res <- results(dds2, contrast=c("group"))   ##add pairwise comparisons
-res1 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Developmental.+0°C.+1.5°C"), alpha=0.05)
-res2 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Developmental.+0°C.+3°C"), alpha=0.05)
-res3 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Transgenerational.+1.5°C.+1.5°C"), alpha=0.05)
-res4 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Transgenerational.+3°C.+3°C"), alpha=0.05)
-res5 <- results(dds2, contrast=c("group", "Developmental.+0°C.+1.5°C", "Transgenerational.+1.5°C.+1.5°C"), alpha=0.05)
-res6 <- results(dds2, contrast=c("group", "Developmental.+0°C.+3°C", "Transgenerational.+3°C.+3°C"), alpha=0.05)
+
+## If we use the contrast "group", we compare each treatment to the control (4 total comparisons). BUT, the authors also compared the developmental to the transgenerational for each temperature (6 comparisons total). So, we have to specify each comparison. Then, we take all the genes that are significantly differentially expressed in at least one of those comparisons, and use those for our contig file to BLAST. 
+
+res1 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Developmental.+0°C.+1.5°C"), alpha=0.05, lfcThreshold = 1.5)
+
+res1[order(res1$padj),]
+summary(res1)
+#res1sig <- which(res1[,6]<0.05)
+#siggenes <- as.data.frame(subset)
+siggenes1 <- subset(rownames(res1), res1$padj < 0.05)
+summary(siggenes1)
+
+res2 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Developmental.+0°C.+3°C"), alpha=0.05, lfcThreshold = 1.5)
+
+res2[order(res2$padj),]
+summary(res2)
+siggenes2 <- subset(rownames(res2), res2$padj < 0.05)
+summary(siggenes2)
+
+res3 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Transgenerational.+1.5°C.+1.5°C"), alpha=0.05, lfcThreshold = 1.5)
+
+res3[order(res3$padj),]
+summary(res3)
+siggenes3 <- subset(rownames(res3), res3$padj < 0.05)
+summary(siggenes3)
+
+res4 <- results(dds2, contrast=c("group", "Control.+0°C.+0°C", "Transgenerational.+3°C.+3°C"), alpha=0.05, lfcThreshold = 1.5)
+
+res4[order(res4$padj),]
+summary(res4)
+siggenes4 <- subset(rownames(res4), res4$padj < 0.05)
+summary(siggenes4)
+
+res5 <- results(dds2, contrast=c("group", "Developmental.+0°C.+1.5°C", "Transgenerational.+1.5°C.+1.5°C"), alpha=0.05, lfcThreshold = 1.5)
+
+res5[order(res5$padj),]
+summary(res5)
+siggenes5 <- subset(rownames(res5), res5$padj < 0.05)
+summary(siggenes5)
+
+res6 <- results(dds2, contrast=c("group", "Developmental.+0°C.+3°C", "Transgenerational.+3°C.+3°C"), alpha=0.05, lfcThreshold = 1.5)
+
+res6[order(res6$padj),]
+summary(res6)
+siggenes6 <- subset(rownames(res6), res6$padj < 0.05)
+summary(siggenes6)
+
+combinedresults <- c(siggenes1, siggenes2, siggenes3, siggenes4, siggenes5, siggenes6)
+summary(combinedresults)
+
+#Merge all of the res objects for each comparison for the differential expression file. 
+res <- rbind(cbind(res1, comp = "CxD1.5"), cbind(res2, comp = "CxD3"), cbind(res3, comp="CxT1.5"), cbind(res4, comp="CxT3"), cbind(res5, comp="D1.5vT1.5"), cbind(res6, comp = "D3vT3"))
+
+res <- as.data.frame(res)
+
+#INCLUDE WILL'S FILTERING HERE! 
+
+saveRDS(res, "./Damselfish_data/res.RDS")
+
+##Check for duplications:
+
+deduped <- combinedresults[!duplicated(combinedresults[,1]),]
+
+library(dplyr)
+combinedresults <- as.data.frame(combinedresults)
+significantcontigs <- rownames(combinedresults) %>% distinct(.keep_all = TRUE)
+detach("package:dplyr", unload=TRUE)
+write.csv(significantcontigs, sep=",", "significantcontigs")
 
 #Note, the "res" functions take a few minutes to run:
 resultsNames(dds2)
@@ -159,7 +205,7 @@ resLFC <- lfcShrink(dds2, coef=2)
 library("BiocParallel")
 register(MulticoreParam(4))
 
-resOrdered <- res[order(res$pvalue),]
+resOrdered <- res[order(res$padj),]
 
 summary(res)
 
@@ -250,40 +296,264 @@ pheatmap(assay(ntd)[select,], cluster_rows=TRUE, show_rownames=FALSE,
 ```
 
 
-BUT wait, we need to annotate the reads so we actually know which genes are being up/down regulated. So, let's import the GFF file (the annotation file) and make a txdb object:
-```{r}
+BUT wait, we need to annotate the reads so we actually know which genes are being up/down regulated. 
 
-#Install GenomicFeatures
-## try http:// if https:// URLs are not supported
-source("https://bioconductor.org/biocLite.R")
-biocLite("GenomicFeatures")
 
-library("GenomicFeatures")
-gtffile <- file.path("/Users/amanda/Documents/Davis/Classes/ECL243/Damselfish_data")
-txdb <- makeTxDbFromGFF("GCF_002109545.1_ASM210954v1_genomic.gff", format="gff3")
-#Some 'orphan' exons were dropped because they are exons that weren't found in the gff file.
+Must BLAST our list of significantly expressed contigs against BLAST. Note that this is run in the Terminal, NOT in R. The following code is courtesy of Taylor Reiter (https://github.com/taylorreiter/olive_genome/blob/master/post-snakemake-processing/scripts/1-compare_blast_tab.R). 
 
-ebg <- exonsBy(txdb, by="gene")
-ebg[[1]]
+```{bash blast,eval=FALSE}
+
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/mRNA_Prot/human.38.rna.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/D_rerio/mRNA_Prot/zebrafish.1.rna.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/M_musculus/mRNA_Prot/mouse.2.rna.fna.gz
+
+#The authors didn't specify which version of BLAST or which versions of the references they used... so that could definitely lead to differences in what we find.
+
+gunzip *.rna.fna.gz
+
+cat human.38.rna.fna mouse.2.rna.fna zebrafish.1.rna.fna > references.rna.fna
+
+makeblastdb -in references.rna.fna -dbtype nucl
+
+blastn -query matches.fa -db references.rna.fna -outfmt 6 -out blast_out.tab
+
+##### The authors didn't use NCBI, they used UCSC genome browser. So I'm going to redo the above, but use the UCSC database (http://hgdownload.soe.ucsc.edu/downloads.html) instead. Hopefully we'll get more hits. 
+
+wget http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/refMrna.fa.gz #human 
+gunzip refMrna.fa.gz
+mv refMrna.fa humanrefMrna.fa
+
+wget http://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/refMrna.fa.gz #mouse
+gunzip refMrna.fa.gz
+mv refMrna.fa mouserefMrna.fa
+
+wget http://hgdownload.soe.ucsc.edu/goldenPath/danRer11/bigZips/refMrna.fa.gz #zebrafish 
+gunzip refMrna.fa.gz
+mv refMrna.fa fishrefMrna.fa
+
+
+cat humanrefMrna.fa mouserefMrna.fa fishrefMrna.fa > ucsc.references.rna.fna
+
+makeblastdb -in ucsc.references.rna.fna -dbtype nucl
+
+blastn -query matches.fa -db ucsc.references.rna.fna -outfmt 6 -out ucsc_blast_out.tab
+
+
+#What happens if we blast against just one genome?: 
+#Fish:
+makeblastdb -in fishrefMrna.fa -dbtype nucl
+blastn -query matches.fa -db fishrefMrna.fa -outfmt 6 -out fish_ucsc_blast_out.tab
+#This gave 18 
+
+#Human:
+makeblastdb -in humanrefMrna.fa -dbtype nucl
+blastn -query matches.fa -db humanrefMrna.fa -outfmt 6 -out human_ucsc_blast_out.tab
+#This gave 27 
+
+#Mouse: 
+makeblastdb -in mouserefMrna.fa -dbtype nucl
+blastn -query matches.fa -db mouserefMrna.fa -outfmt 6 -out mouse_ucsc_blast_out.tab
+#This gave 10 
+
+### Wait, wait, wait. They totally did NOT blast against the three genomes, they blasted against NCBI BLASTN and BLASTP nucleotide (nt) and non-redundant (nr) databases. Let's try this on the command line: 
+
+blastn -db nt -query matches.fa -evalue 10 -out bn_out.txt -outfmt 6 -entrez_query 'all[filter] NOT predicted[title]' -remote
 
 ```
 
-The authors already gave us a count file, so we can step the step of creating a count file from individual read files. Now we just do the actual counting and create a SummarizedExperiment object:
-```{r}
-library("GenomicAlignments")
 
-se <- summarizeOverlaps(features=ebg, reads=counts, 
-                        mode="Union", 
-                        singleEnd=FALSE, 
-                        ignore.strand=TRUE, 
-                        fragments=TRUE )
+Now that we have the significantly expressed contigs blasted to the combined reference (human, mouse, zebrafish), we can bring that file into R to filter out the protein names: 
+```{r blast_parse}
+#Import blast ouput file: 
+blast <- read.delim("Damselfish_data/blast_out.tab", sep="\t", stringsAsFactors = FALSE)
 
-##Can't do this because we don't have the bam files :(
+#These are the column names for any BLAST file. What we care about is the bitscore and the qseqid. 
+colnames(blast) <- c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", 
+                       "qstart", "qend", "sstart", "send", "evalue", "bitscore")
+
+#Order the columns first based on the contig, then on the bitscore. The bitscore is the measure that we use to determine which hit is the best one for that contig. 
+blast <- blast[order(blast$qseqid, blast$bitscore), ]
+    
+#Select the last row by id
+blast_bitscore <- blast[!duplicated(blast$qseqid, fromLast=TRUE), ]
+
+
+#Create a "block" function so that we don't overwhelm the NCBI server: 
+library(rentrez)
+block <- function(i){
+  nuid_species <- entrez_summary(db="nucleotide", id = i) #Note that "nuid" stands for nucleotide ID. 
+  Sys.sleep(2) # sleep; don't overwhelm NCBI server
+  return(nuid_species)
+  }
+
+# apply to all unique nuids
+nuid_names <- lapply(unique(blast_bitscore$sseqid), block)
+# extract species names from retrieved data
+nuid_unique_names <- sapply(nuid_names, "[[", 3)
+# make a dataframe of nuid and species
+nuid_unique <- unique(blast_bitscore$sseqid)
+    
+names_w_nuids <- cbind(nuid_unique, nuid_unique_names)
+names_w_nuids <- as.data.frame(names_w_nuids)
+colnames(names_w_nuids) <- c("nuid", "nuid_title")
+    
+# merge dataframe with nuid species
+blast_bitscore <- merge(blast_bitscore, names_w_nuids, by.x = "sseqid", by.y = "nuid")
+    
 ```
 
 
+Exact replicate of the above code, but using the references generated from the UCSC database instead of NCBI:
+```{r blast_parse}
+#Import blast ouput file: 
+ucsc_blast <- read.delim("Damselfish_data/ucsc_blast_out.tab", sep="\t", stringsAsFactors = FALSE)
+
+#These are the column names for any BLAST file. What we care about is the bitscore and the qseqid. 
+colnames(ucsc_blast) <- c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", 
+                       "qstart", "qend", "sstart", "send", "evalue", "bitscore")
+
+#Order the columns first based on the contig, then on the bitscore. The bitscore is the measure that we use to determine which hit is the best one for that contig. 
+ucsc_blast <- ucsc_blast[order(ucsc_blast$qseqid, ucsc_blast$bitscore), ]
+    
+#Select the last row by id
+ucsc_blast_bitscore <- ucsc_blast[!duplicated(ucsc_blast$qseqid, fromLast=TRUE), ]
+
+#Create a "block" function so that we don't overwhelm the NCBI server: 
+library(rentrez)
+block <- function(i){
+  nuid_species <- entrez_summary(db="nucleotide", id = i) #Note that "nuid" stands for nucleotide ID. 
+  Sys.sleep(2) # sleep; don't overwhelm NCBI server
+  return(nuid_species)
+  }
+
+# apply to all unique nuids
+ucsc_nuid_names <- lapply(unique(ucsc_blast_bitscore$sseqid), block)
+# extract species names from retrieved data
+ucsc_nuid_unique_names <- sapply(ucsc_nuid_names, "[[", 3)
+# make a dataframe of nuid and species
+ucsc_nuid_unique <- unique(ucsc_blast_bitscore$sseqid)
+    
+ucsc_names_w_nuids <- cbind(ucsc_nuid_unique, ucsc_nuid_unique_names)
+ucsc_names_w_nuids <- as.data.frame(ucsc_names_w_nuids)
+colnames(ucsc_names_w_nuids) <- c("nuid", "nuid_title")
+    
+# merge dataframe with nuid species
+ucsc_blast_bitscore <- merge(ucsc_blast_bitscore, ucsc_names_w_nuids, by.x = "sseqid", by.y = "nuid")
+    
+```
+
+So, from NCBI we got 14/135 hits for proteins and for UCSC we got 13/135.....
 
 
+```{r blast_parse}
+#Import blast ouput file: 
+blast <- read.delim("Damselfish_data/blast_out.tab", sep="\t", stringsAsFactors = FALSE)
+
+#These are the column names for any BLAST file. What we care about is the bitscore and the qseqid. 
+colnames(blast) <- c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", 
+                       "qstart", "qend", "sstart", "send", "evalue", "bitscore")
+
+#Order the columns first based on the contig, then on the bitscore. The bitscore is the measure that we use to determine which hit is the best one for that contig. 
+blast <- blast[order(blast$qseqid, blast$evalue), ]
+    
+#Select the last row by id
+blast_bitscore <- blast[!duplicated(blast$qseqid, fromLast=TRUE), ]
 
 
+#Create a "block" function so that we don't overwhelm the NCBI server: 
+library(rentrez)
+block <- function(i){
+  nuid_species <- entrez_summary(db="nucleotide", id = i) #Note that "nuid" stands for nucleotide ID. 
+  Sys.sleep(2) # sleep; don't overwhelm NCBI server
+  return(nuid_species)
+  }
+
+# apply to all unique nuids
+nuid_names <- lapply(unique(blast_bitscore$sseqid), block)
+# extract species names from retrieved data
+nuid_unique_names <- sapply(nuid_names, "[[", 3)
+# make a dataframe of nuid and species
+nuid_unique <- unique(blast_bitscore$sseqid)
+    
+names_w_nuids <- cbind(nuid_unique, nuid_unique_names)
+names_w_nuids <- as.data.frame(names_w_nuids)
+colnames(names_w_nuids) <- c("nuid", "nuid_title")
+    
+# merge dataframe with nuid species
+blast_bitscore <- merge(blast_bitscore, names_w_nuids, by.x = "sseqid", by.y = "nuid")
+    
+```
+
+
+Using the new BLAST-ed file that Will generated (BLASTn, nr/nt):
+```{bash}
+#Copy BLAST-ed file from the FARM to my local computer: 
+scp mfrazier@farm.cse.ucdavis.edu:/home/mfrazier/damselfish/bn_out.txt /Users/amanda/Documents/Davis/Classes/ECL243/Damselfish_data
+```
+
+```{r}
+blastn <- read.delim("Damselfish_data/bn_out.txt", sep="\t", stringsAsFactors = FALSE)
+
+#These are the column names for any BLAST file. What we care about is the bitscore and the qseqid. 
+colnames(blastn) <- c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", 
+                       "qstart", "qend", "sstart", "send", "evalue", "bitscore")
+
+length(unique(blastn$qseqid))
+
+#The qseqid is the querey (e.g. gene) sequence id. 
+#The sseqid is the subject (e.g. reference genome) sequence id. 
+#Order the columns first based on the contig, then on the evalue. 
+blastn_ordered <- blastn[order(blastn$qseqid, blastn$evalue), ]
+    
+#Select the last row by id
+blastn_best <- blastn[!duplicated(blastn$qseqid, fromLast=TRUE), ]
+
+
+#will
+blastn_ordered$sseqid <- sub("\\..*", "", blastn_ordered$sseqid)
+u_sseqid <- unique(blastn_ordered$sseqid)
+
+ensembl <- useMart("ensembl")
+
+mo <- getBM(c("sseqid", "go_id"), values = u_sseqid, mart = ensembl)
+
+
+#Get rid of everything after the period, this is what we want to search in uniprot:
+blastn_best_sseqid <- gsub("\\..*", "", blastn_best_sseqid) 
+blastn_sseqid <- gsub("\\..*", "", blastn_ordered$sseqid)
+blastn_sseqid <- unique(blastn_sseqid)
+write(blastn_sseqid, "blastn_sseqid")
+
+blastn_best_sseqid
+
+write(blastn_best_sseqid, "blastn_best_sseqid")
+
+#How many duplicate sseqid's do we have from the BLAST search? Should we remove these?
+deduped_blastn_best_sseqid <- !duplicated(blastn_best_sseqid)
+
+table(deduped_blastn_best_sseqid)["FALSE"]
+```
+
+
+```{r}
+
+mres <- readRDS("./Damselfish_data/mres.RDS")
+
+```
+
+
+Back to the figures.....
+
+Heatmap:
+```{r}
+library("pheatmap")
+select <- order(rowMeans(counts(dds2, normalized=TRUE)), 
+                decreasing=TRUE)[1:20]
+df <- as.data.frame(colData(dds2)["group"])
+pheatmap(assay(ntd)[select,], cluster_rows=FALSE, show_rownames=FALSE, 
+         cluster_cols=FALSE, annotation_col=df)
+
+pheatmap(assay(ntd)[select,], cluster_rows=TRUE, show_rownames=FALSE, 
+         cluster_cols=TRUE, annotation_col=df)
+```
 
