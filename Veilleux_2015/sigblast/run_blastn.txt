@@ -1,0 +1,7 @@
+#!/bin/bash -l
+#SBATCH -t 2-12:00:00
+#SBATCH --mem=24G
+
+fasta=matches.fa
+
+~/bin/blast/ncbi-blast-2.7.1+/bin/blastn -db nt -query $fasta -evalue 1e-10 -out bn_out.txt -outfmt 6 -entrez_query 'all[filter] NOT predicted[title]' -remote

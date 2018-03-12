@@ -1,0 +1,28 @@
+==========================================
+SLURM_JOB_ID = 18503009
+SLURM_NODELIST = c8-72
+==========================================
+Module slurm/16.05.8 loaded 
+Module openmpi/2.0.1 loaded 
+
+===========================================================================
+Job Finished
+
+Name                : run_blastn.txt
+User                : hemstrow
+Partition           : med
+Nodes               : c8-72
+Cores               : 10
+State               : COMPLETED
+Submit              : 2018-03-09T16:08:14
+Start               : 2018-03-09T16:08:14
+End                 : 2018-03-09T21:44:05
+Reserved walltime   : 2-12:00:00
+Used walltime       :   05:35:51
+Used CPU time       :   00:00:06
+% User (Computation): 92.23%
+% System (I/O)      :  7.77%
+Mem reserved        : 24G/node
+Max Mem used        : 55.28M (c8-72)
+Max Disk Write      : 296.96K (c8-72)
+Max Disk Read       : 583.68K (c8-72)

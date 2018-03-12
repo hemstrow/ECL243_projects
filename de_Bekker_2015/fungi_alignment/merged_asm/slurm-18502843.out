@@ -1,0 +1,29 @@
+==========================================
+SLURM_JOB_ID = 18502843
+SLURM_NODELIST = c10-95
+==========================================
+Module slurm/16.05.8 loaded 
+Module openmpi/2.0.1 loaded 
+Reading the annotation file: merged.gtf
+
+===========================================================================
+Job Finished
+
+Name                : allocation
+User                : hemstrow
+Partition           : 
+Nodes               : c10-95
+Cores               : 1
+State               : COMPLETED
+Submit              : 2018-03-09T15:06:10
+Start               : 2018-03-09T15:06:10
+End                 : 2018-03-09T15:06:12
+Reserved walltime   : --
+Used walltime       : 00:00:02
+Used CPU time       : 00:00:01
+% User (Computation): 54.94%
+% System (I/O)      : 45.06%
+Mem reserved        : 0/node
+Max Mem used        : 0.00  (c10-95)
+Max Disk Write      : 0.00  (c10-95)
+Max Disk Read       : 0.00  (c10-95)

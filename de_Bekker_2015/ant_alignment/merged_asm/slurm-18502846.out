@@ -1,0 +1,29 @@
+==========================================
+SLURM_JOB_ID = 18502846
+SLURM_NODELIST = c10-95
+==========================================
+Module slurm/16.05.8 loaded 
+Module openmpi/2.0.1 loaded 
+Reading the annotation file: merged.gtf
+
+===========================================================================
+Job Finished
+
+Name                : make_fasta.sh
+User                : hemstrow
+Partition           : med
+Nodes               : c10-95
+Cores               : 1
+State               : COMPLETED
+Submit              : 2018-03-09T15:09:23
+Start               : 2018-03-09T15:09:24
+End                 : 2018-03-09T15:09:30
+Reserved walltime   : 12:00:00
+Used walltime       : 00:00:06
+Used CPU time       : 00:00:04
+% User (Computation): 61.18%
+% System (I/O)      : 38.80%
+Mem reserved        : 2600M/core
+Max Mem used        : 0.00  (c10-95)
+Max Disk Write      : 0.00  (c10-95)
+Max Disk Read       : 0.00  (c10-95)
