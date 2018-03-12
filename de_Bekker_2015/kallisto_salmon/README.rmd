@@ -1,1 +1,7 @@
 # Kalliso and salmon scripts and results (where small enough) for de_bekker et al
+
+# For each Salmon and Kallisto, index files were made using kallisto_ant_index.sh, kallisto_fung_index.sh, salm_ant_index.sh, and salm_fung.index for ant and fungal reference transcripts, respectively using the UC Davis Farm II cluster.
+
+# The "run_" files took the index files from the previous step and generated transcript quantification files for Salmon and Kallisto, and for fungal vs. ant data. Also using the UCD Farm II cluster.
+
+# The Salm_Kall_tximport_script.R file is an R script that reads the outputs from Kallisto or Salmon using tximport and tximportdata. Then it calculates differential gene expression using deSEQ2. Some figures are made, but it's not super complete.
