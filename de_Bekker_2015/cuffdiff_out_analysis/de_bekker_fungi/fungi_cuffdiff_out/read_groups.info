@@ -1,0 +1,10 @@
+file	condition	replicate_num	total_mass	norm_mass	internal_scale	external_scale
+./43_accepted.bam	Live_manipulation	0	7.38901e+06	1.01165e+07	0.730368	1
+./44_accepted.bam	Live_manipulation	1	6.6112e+06	1.01165e+07	0.653484	1
+./45_accepted.bam	Live_manipulation	2	9.75023e+06	1.01165e+07	0.963768	1
+./46_accepted.bam	Dead_after_Mani	0	1.06647e+07	1.01165e+07	1.05416	1
+./47_accepted.bam	Dead_after_Mani	1	9.07606e+06	1.01165e+07	0.897124	1
+./48_accepted.bam	Dead_after_Mani	2	9.53845e+06	1.01165e+07	0.94283	1
+./55_accepted.bam	Fungal_Control	0	1.01223e+07	1.01165e+07	1.00054	1
+./56_accepted.bam	Fungal_Control	1	1.46197e+07	1.01165e+07	1.44508	1
+./57_accepted.bam	Fungal_Control	2	1.32798e+07	1.01165e+07	1.31264	1
