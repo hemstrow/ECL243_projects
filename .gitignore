@@ -25,6 +25,7 @@
 ./de_Bekker_2015/ant_alignment/cufflinks/SRR1986855_1.fastq_top/unmapped.bam
 ./de_Bekker_2015/ant_alignment/cufflinks/SRR1986856_1.fastq_top/unmapped.bam
 ./de_Bekker_2015/ant_alignment/cufflinks/SRR1986857_1.fastq_top/unmapped.bam
+./de_Bekker_2015/ant_alignment/merged_asm/merged_ant.fa
 ./de_Bekker_2015/ant_alignment/merged_asm/merged.gtf
 ./de_Bekker_2015/fungi_alignment/cufflinks/old/SRR1986843_1.fastq_top/accepted_hits.bam
 ./de_Bekker_2015/fungi_alignment/cufflinks/old/SRR1986843_1.fastq_top/unmapped.bam
