@@ -1,0 +1,15 @@
+SRR1986843_1.fastq_top/align_summary.txt:46.8% concordant pair alignment rate.	SRR1986843_1.fastq_top/align_summary.txt:Aligned pairs:   8265087
+SRR1986844_1.fastq_top/align_summary.txt:41.4% concordant pair alignment rate.	SRR1986844_1.fastq_top/align_summary.txt:Aligned pairs:   7316289
+SRR1986845_1.fastq_top/align_summary.txt:62.7% concordant pair alignment rate.	SRR1986845_1.fastq_top/align_summary.txt:Aligned pairs:  10829252
+SRR1986846_1.fastq_top/align_summary.txt:69.4% concordant pair alignment rate.	SRR1986846_1.fastq_top/align_summary.txt:Aligned pairs:  11957131
+SRR1986847_1.fastq_top/align_summary.txt:62.5% concordant pair alignment rate.	SRR1986847_1.fastq_top/align_summary.txt:Aligned pairs:  10168308
+SRR1986848_1.fastq_top/align_summary.txt:58.7% concordant pair alignment rate.	SRR1986848_1.fastq_top/align_summary.txt:Aligned pairs:  10674765
+SRR1986849_1.fastq_top/align_summary.txt: 0.0% concordant pair alignment rate.	SRR1986849_1.fastq_top/align_summary.txt:Aligned pairs:      2257
+SRR1986850_1.fastq_top/align_summary.txt: 0.0% concordant pair alignment rate.	SRR1986850_1.fastq_top/align_summary.txt:Aligned pairs:      3231
+SRR1986851_1.fastq_top/align_summary.txt: 0.0% concordant pair alignment rate.	SRR1986851_1.fastq_top/align_summary.txt:Aligned pairs:      3372
+SRR1986852_1.fastq_top/align_summary.txt: 0.0% concordant pair alignment rate.	SRR1986852_1.fastq_top/align_summary.txt:Aligned pairs:      3097
+SRR1986853_1.fastq_top/align_summary.txt: 0.0% concordant pair alignment rate.	SRR1986853_1.fastq_top/align_summary.txt:Aligned pairs:      5495
+SRR1986854_1.fastq_top/align_summary.txt: 0.0% concordant pair alignment rate.	SRR1986854_1.fastq_top/align_summary.txt:Aligned pairs:      3417
+SRR1986855_1.fastq_top/align_summary.txt:83.1% concordant pair alignment rate.	SRR1986855_1.fastq_top/align_summary.txt:Aligned pairs:  11367018
+SRR1986856_1.fastq_top/align_summary.txt:83.8% concordant pair alignment rate.	SRR1986856_1.fastq_top/align_summary.txt:Aligned pairs:  16647688
+SRR1986857_1.fastq_top/align_summary.txt:83.0% concordant pair alignment rate.	SRR1986857_1.fastq_top/align_summary.txt:Aligned pairs:  14915514

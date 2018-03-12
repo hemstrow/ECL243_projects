@@ -1,5 +1,9 @@
-./de_Bekker_2015/ant_alignment/cufflinks/SRR1986843_1.fastq_top/accepted_hits.bam
+./de_Bekker_2015/cuffdiff_out_analysis/de_bekker_ants/cuffdiff_ant_out/cuffData.db
+./de_Bekker_2015/cuffdiff_out_analysis/de_bekker_ants/cuffdiff_out/cuffData.db
+./de_Bekker_2015/cuffdiff_out_analysis/de_bekker_fungi/cuffdiff_out/cuffData.db
+./de_Bekker_2015/cuffdiff_out_analysis/de_bekker_fungi/fungi_cuffdiff_out/cuffData.db
 ./de_Bekker_2015/ant_alignment/cufflinks/SRR1986843_1.fastq_top/unmapped.bam
+./de_Bekker_2015/ant_alignment/cufflinks/SRR1986843_1.fastq_top/accepted_hits.bam
 ./de_Bekker_2015/ant_alignment/cufflinks/SRR1986844_1.fastq_top/accepted_hits.bam
 ./de_Bekker_2015/ant_alignment/cufflinks/SRR1986844_1.fastq_top/unmapped.bam
 ./de_Bekker_2015/ant_alignment/cufflinks/SRR1986845_1.fastq_top/accepted_hits.bam

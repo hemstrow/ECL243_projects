@@ -1,0 +1,5 @@
+param	value
+cmd_line	cuffdiff -o cuffdiff_out -b /home/smmoenga/RNASeq/ECL_Zombie/data/GCA_001272575.2_ASM127257v2_genomic.fa -p 8 -library-type fr-firststrand -library-norm-method classic-fpkm -no-update-check -L Live_manipulation,Dead_after_Mani,Fungal_Control cuffmerged.gtf ./43_accepted.bam,./44_accepted.bam,./45_accepted.bam ./46_accepted.bam,./47_accepted.bam,./48_accepted.bam ./55_accepted.bam,./56_accepted.bam,./57_accepted.bam 
+version	2.2.1
+SVN_revision	4237
+boost_version	104700
