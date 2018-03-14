@@ -1,0 +1,270 @@
+---
+title: "Kallisto_attempt"
+author: "Susan Moenga"
+date: "3/7/2018"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+
+source("https://bioconductor.org/biocLite.R")
+biocLite("rhdf5")
+biocLite("tximport")
+
+library(rhdf5)
+
+library(tximport)
+
+dir = "/Volumes/smmoenga/ECL243/Zombie_data/kallisto_new"
+samples <- read.table(file.path(dir,"kall_ant_output", "samples.txt"), header=TRUE)
+
+files <- file.path(dir,"kall_ant_output", samples$Name_Fastq, "abundance.h5")
+names(files) <- paste0(samples$Name_Fastq)
+
+##troubleshoot
+all(file.exists(files))
+file.exists(files)
+file.exists("/Volumes/smmoenga/ECL243/Zombie_data/Kallisto/kall_fung_output/SRR1986854_1")
+###done
+
+txi.kallisto <- tximport(files, type = "kallisto", txOut = TRUE)
+head(txi.kallisto$counts)
+
+###downstream with edgeR
+cts <- txi.kallisto$counts
+normMat <- txi.kallisto$length
+normMat <- normMat/exp(rowMeans(log(normMat)))
+
+library(edgeR)
+o <- log(calcNormFactors(cts/normMat)) + log(colSums(cts/normMat))
+y <- DGEList(cts)
+y$offset <- t(t(log(normMat)) + o)
+# y is now ready for estimate dispersion functions see edgeR User's Guide
+
+
+##lets make a samples file
+
+
+y$samples = samples
+
+#eyeball replicate clusters
+
+lcpm <- cpm(y$counts, log=TRUE)
+heatmap(cor(lcpm))
+
+#Removing genes that are lowly expressed: :  :
+
+
+#how many genes are o-expressed?
+table(rowSums(y$counts==0)==9)
+
+
+keep <- rowSums(y$counts>1) >=1
+y <- y[keep, , keep.lib.sizes=FALSE]
+
+dim(y)
+
+
+
+ 
+```
+
+
+```{r Normalize}
+# 1. edger adjusts for *sequencing depth* in the DGE model, 
+# 2. RNA composition that may result in some genes being very highly expressed consuming a sigificant portion of your library size..and result in under-samling of the lowly expressed genes - it calculates normalization factors that reduce log-fold changes between samples for most genes using Trimmed Mean of M-VALUES 
+
+
+y_TMM <- calcNormFactors(y, method = "TMM")
+y_TMM$samples$norm.factors
+
+##visualize pre/post-normalization - can skip this part fo going through steps
+## first duplicate the data : as in y = y2
+y2 <- y
+
+#and return to un-normalized
+y2$samples$norm.factors <- 1
+
+#Now plot
+par(mfrow=c(1,2))
+
+lcpm_y2 <- cpm(y2, log=TRUE)
+boxplot(lcpm_y2, las=2, col=col, main="")
+title(main="Unnormalised data",ylab="Log-cpm")
+
+#recalculate normalizationfactors
+y2=calcNormFactors(y2)
+y2$samples$norm.factors
+#and replot
+lcpm_y2 <- cpm(y2, log=TRUE)
+boxplot(lcpm_y2, las=2, col=col, main="")
+title(main="Normalised data",ylab="Log-cpm")
+
+par(mfrow=c(1,1))
+
+###cant remember what this was for: oh I remember, MD plot for the same as above
+plotMD(cpm(y, log=TRUE), column=1)
+abline(h=0, col="red", lty=2, lwd=2)
+
+
+
+```
+
+
+```{r Unsupervised clustering}
+
+# I really prefer glimma
+library(Glimma)
+glMDSPlot(cpm(y$counts, log=TRUE),anno=paste(rownames(lcpm)), labels=paste(colnames(lcpm)),groups = Treatment, 
+          gene.selection = "pairwise",folder = "Kallisto_MDS_All", log = F, top = 1000,main = "Global expression MDS Plot",launch=T) 
+
+```
+
+
+```{r model and design}
+group<-factor(paste0(Treatment))
+
+y$samples$group <- group
+design1 <- model.matrix(~0 + group)
+
+colnames(design1) <- levels(group)
+design1
+
+y_TMM <- estimateDisp(y_TMM, design1, robust = T)
+y_TMM$common.dispersion
+plotBCV(y_TMM)
+
+#better to stick with y, so assign y_tmm to y
+y <- y_TMM
+
+fit1= glmQLFit(y,design1,robust = T)
+plotQLDisp(fit1)
+
+```
+
+
+
+```{r Make contrasts}
+
+#notice how I changed the order of Dead - Live for the 3rd contrast, more intuitive
+my.contrasts <- makeContrasts(
+     Live_Control = Live_Manipulation - Ant_10am_Control,
+     Dead_Control = Dead_After_mani-Ant_2pm_Control,
+     Live_Dead = Dead_After_mani- Live_Manipulation, 
+      levels = design1)
+
+##end
+
+```
+
+```{r which are the corresponding differentially expressed genes?}
+#Using R's glm, as a single factor, you would get these, which are fewer when compared to removing heteroscedasticity as in limma voom below
+#live
+Live_Control_GLM <- glmQLFTest(fit1, contrast=my.contrasts[,"Live_Control"])
+topTags(Live_Control_GLM)
+summary(decideTests(Live_Control_GLM))
+plotMD(Live_Control_GLM)
+
+##dead
+Dead_Control_GLM <- glmQLFTest(fit1, contrast=my.contrasts[,"Dead_Control"])
+topTags(Dead_Control_GLM)
+summary(decideTests(Dead_Control_GLM))
+plotMD(Dead_Control_GLM)
+
+#live dead
+Live_Dead_GLM <- glmQLFTest(fit1, contrast=my.contrasts[,"Live_Dead"])
+topTags(Live_Dead_GLM)
+summary(decideTests(Live_Dead_GLM))
+plotMD(Live_Dead_GLM)
+
+```
+
+
+```{r try with limma-voom}
+
+
+#WE CAN SEE THE OBVIOUS Reduction in dependence of variance on the mean
+##not used for presentation, reduces sensititvity to lowly expressed genes
+
+y_voom <- voom(y, design1, plot=T)
+y_voom
+
+vfit <- lmFit(y_voom, design1)
+vfit1 <- contrasts.fit(vfit, contrasts=my.contrasts)
+efit <- eBayes(vfit1)
+plotSA(efit)
+
+et =summary(decideTests(efit))
+summary(decideTests(vfit1))
+
+#THIS Is what we want
+tfit <- treat(efit)
+dt <- decideTests(tfit)
+summary(dt)
+
+
+```
+
+
+```{r specific DE lists}
+Live_DE<- topTreat(tfit, coef=1, n= Inf, sort.by = "logFC", p.value = 0.05) # Live_Control
+  head(Live_DE, n=20)
+ nrow(Live_DE)
+ 
+ write.csv(Live_DE, file = "Live_Manipulation_DE.csv")
+ Live_DE_list <-rownames(Live_DE)
+  
+Dead_DE<- topTreat(tfit, coef=2, n= Inf, sort.by = "logFC", p.value = 0.05) # Live_Control
+  head(Dead_DE, n=20) 
+  nrow(Dead_DE)
+  
+  Dead_DE_list <-rownames(Dead_DE)
+  write.csv(Dead_DE, file = "Dead_after_Manipulation_DE.csv")
+  
+Live_Dead_DE<- topTreat(tfit, coef=3, n= Inf, sort.by = "logFC", p.value = 0.05) # Live_Control
+  head(Live_Dead_DE, n=20) 
+  nrow(Live_Dead_DE)
+  
+  Live_Dead_DE_list <-rownames(Live_Dead_DE)
+  write.csv(Live_Dead_DE, file = "Live_vs_Dead_Manipulation_DE.csv")
+```
+
+
+
+
+```{r  Glimma plots}
+glMDPlot(tfit, coef=1, status=dt, main=colnames(tfit)[1],
+        counts=y$counts, groups=group,folder = "Live_Control",launch=T)  # Live_Control
+
+glMDPlot(tfit, coef=2, status=dt, main=colnames(tfit)[2],
+        counts=y$counts, groups=group,folder = "Dead_Control",launch=T)  # Live_Control
+
+glMDPlot(tfit, coef=3, status=dt, main=colnames(tfit)[3],
+        counts=y$counts, groups=group,folder = "Live_Dead",launch=T)  # Live_Control
+
+```
+
+
+```{r CLUSTER - Heatmap}
+library(gplots)
+Live_DE_list <-rownames(Live_DE)[1:100]
+
+i <- which(rownames(y_voom$E) %in% Live_DE_list)
+mycol <- colorpanel(1000,"blue","white","red")
+heatmap.2(y_voom$E[i,], scale = "row",
+   labRow=rownames(y_voom$E)[i], labCol=group,
+   col=mycol, trace="none", density.info="histogram", 
+   margin=c(8,6), lhei=c(2,10), dendrogram="both", margins = c(7,15), key = TRUE)
+
+
+
+```
+
