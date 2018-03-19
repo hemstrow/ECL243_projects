@@ -10,6 +10,9 @@ Image showing the number of differentially expressed transcripts between several
 do_diff_ant.R:
 R script to make ant_counts.pdf and nsf_and_counts.pdf from cuffdiff output.
 
+nsf_ant_counts.pdf:
+Image showing the number of differentially expressed transcripts between several treatments, strandedness not set.
+
 overall_align_summary.txt:
 summary of aligned reads per sample.
 
